@@ -1,9 +1,3 @@
-//
-//  graphic.h
-//  game
-//
-//  Created by Thái Dương on 14/04/2024.
-//
 
 #ifndef graphic_h
 #define graphic_h
@@ -97,6 +91,12 @@ struct Graphic
 
         SDL_RenderCopy(renderer, texture, NULL, &dest);
     }
+    
+    void prepareScene ()
+        {
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderClear(renderer);
+        }
 
     void prepareScene (SDL_Texture* background)
     {

@@ -4,8 +4,8 @@
 #include <iostream>
 using namespace std;
 
-const int SCREEN_WIDTH = 1000;
+const int SCREEN_WIDTH = 700;
 const int SCREEN_HEIGHT = 700;
-const string WINDOW_TITLE = "CastleVania";
+const string WINDOW_TITLE = "<<Spacer>>";
 
 #endif
