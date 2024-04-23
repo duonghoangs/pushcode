@@ -7,7 +7,7 @@
 #include "defs.h"
 #include "graphic.h"
 
-#define INITIAL_speed 50;
+#define INITIAL_speed 3;
 struct mouse
 {
     int x, y;
