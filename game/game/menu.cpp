@@ -3,6 +3,7 @@
 #include <SDL2_image/SDL_image.h>
 #include "menu.hpp"
 #include "renderer.hpp"
+#include <SDL2_mixer/SDL_mixer.h>
 
 bool Checkselect(const int& x, const int& y, const SDL_Rect& rect)
 {
@@ -29,7 +30,6 @@ int showmenu (SDL_Texture *menu, Graphic graphics)
     posarr[1].y = 390;
     posarr[1].w = 250;
     posarr[1].h = 436;
-    bool select[menubuttom] = {0, 0};
     SDL_Event mouse;
     
     int mousex = 0;
@@ -57,19 +57,26 @@ int showmenu (SDL_Texture *menu, Graphic graphics)
     buttomrect[3].h = 70;
 
     int x = 0;
+    int sound_flag = 0;
+    
+    SDL_Rect sound;
+    sound.x = 190;
+    sound.y = 390;
+    sound.w = 660;
+    sound.h = 569;
+    SDL_Texture *soundt = graphics.loadTexture("on.png");
     while (true)
     {
         graphics.prepareScene(menu);
         SDL_GetMouseState(&mousex, &mousey);
             
-            // Kiểm tra và hiển thị texture selecte khi con trỏ chuột trỏ đến posarr
             for (int i = 0; i < menubuttom; ++i)
             {
                 if (Checkselect(mousex, mousey, posarr[i]))
                 {
                     if (i == 0) {x = 1;}
                     else {x = 3;}
-                        //                    SDL_RenderCopy(graphics.renderer, selecte, NULL, &buttomrect);
+                        
                     SDL_RenderCopyEx(graphics.renderer, selecte, NULL, &buttomrect[x - 1], 90, NULL, SDL_FLIP_NONE);
                     SDL_RenderCopyEx(graphics.renderer, selecte, NULL, &buttomrect[x], -90, NULL, SDL_FLIP_NONE);
                 }
@@ -77,6 +84,7 @@ int showmenu (SDL_Texture *menu, Graphic graphics)
 
         while (SDL_PollEvent(&mouse))
         {
+            
             switch (mouse.type)
             {
                 case SDL_QUIT: 
@@ -96,7 +104,16 @@ int showmenu (SDL_Texture *menu, Graphic graphics)
                             }
                             if (Checkselect(mousex, mousey, posarr[1]))
                             {
-                                
+                                if (sound_flag == 0) 
+                                {
+                                    Mix_PauseMusic(); sound_flag = 1;
+                                    soundt = graphics.loadTexture("off.png");
+                                }
+                                else 
+                                {
+                                    Mix_ResumeMusic(); sound_flag = 0;
+                                    soundt = graphics.loadTexture("on.png");
+                                }
                             }
                          
                         }
@@ -109,7 +126,7 @@ int showmenu (SDL_Texture *menu, Graphic graphics)
                         break;
             }
         }
-
+        SDL_RenderCopy(graphics.renderer, soundt, NULL, &sound);
         graphics.presentscene();
     }
     return 1;

@@ -15,9 +15,9 @@
 
 
 
-struct asteroid asteroids[ASTEROIDS];
-struct player p;
-struct player lives[LIVES];
+asteroid asteroids[ASTEROIDS];
+player p;
+player lives[LIVES];
 
 
 void waitUntilKeyPressed()
@@ -62,8 +62,7 @@ int main (int argc, char* args[])
     
     int độ = 0;
     while(quit == 0) 
-    {
-        
+    {        
         //================ menu ===========================
         SDL_Texture *menu = NULL;
         int retmenu = showmenu(menu, graphics);
@@ -81,8 +80,8 @@ int main (int argc, char* args[])
             
             if (state[SDL_SCANCODE_UP]) {
                 
-                struct vector2d thrust = get_direction(&p);
-                multiply_vector(&thrust, .06);
+                vector2d thrust = get_direction(&p);
+                multiply_vector(&thrust, 0.06);
                 apply_force(&p.velocity, thrust);
             }
             
@@ -98,7 +97,6 @@ int main (int argc, char* args[])
             if (lives[0].lives > 0)
             {
                 shoot_bullet(&p, bullet_sound);
-                
             }
             //        while (SDL_PollEvent(&event)) {
             //
@@ -134,9 +132,9 @@ int main (int argc, char* args[])
                 p.velocity.x = 0;
                 p.velocity.y = 0;
                 
-                int i = LIVES - 1;
                 
-                for ( i = LIVES; i >= 0; i--) {
+                
+                for (int i = LIVES; i >= 0; i--) {
                     
                     if(lives[i].lives > 0) {
                         
@@ -148,15 +146,13 @@ int main (int argc, char* args[])
                 }
             }
             
-            int i = 0;
-            struct vector2d translation = {-SCREEN_WIDTH / 2, -SCREEN_HEIGHT / 2};
+            vector2d translation = {-SCREEN_WIDTH / 2, -SCREEN_HEIGHT / 2};
             
-            for (i = 0; i < BULLETS; i++) {
+            for (int i = 0; i < BULLETS; i++) {
                 
                 if (p.bullets[i].alive == TRUE) {
                     
-                    
-                    struct vector2d world = add_vector_new(&p.bullets[i].location, &translation);
+                    vector2d world = add_vector_new(&p.bullets[i].location, &translation);
                     int index = collision_asteroids(asteroids, ASTEROIDS, &world, 1);
                     
                     if (index != -1) {
@@ -165,7 +161,6 @@ int main (int argc, char* args[])
                         p.bullets[i].alive = FALSE;
                         play(asteroid_sound);
                         if (asteroids[index].size != SMALL) {
-                            
                             spawn_asteroids(asteroids, ASTEROIDS, asteroids[index].size, asteroids[index].location);
                         }
                     }
@@ -192,7 +187,7 @@ int main (int argc, char* args[])
             SDL_RenderCopyEx(graphics.renderer, ship, NULL, &rect, độ, NULL, SDL_FLIP_NONE);
             
             //=========================asteroid=================================
-            for (i = 0; i < ASTEROIDS; i++) {
+            for (int i = 0; i < ASTEROIDS; i++) {
                 
                 if (asteroids[i].alive) {
                     SDL_Rect rects;
@@ -224,7 +219,7 @@ int main (int argc, char* args[])
             }
             //================bullet=====================================
             SDL_Texture *bullet = graphics.loadTexture("bluebullet.png");
-            for (i = 0; i < BULLETS; i++) {
+            for (int i = 0; i < BULLETS; i++) {
                 
                 if (p.bullets[i].alive == TRUE) {
                     SDL_Rect bulle;
@@ -238,7 +233,7 @@ int main (int argc, char* args[])
             }
             //==============liveicon====================================
             int x = 0;
-            for (int i = 0; i < LIVES; ++i)
+            for (int i = 0; i < LIVES; i++)
             {
                 if (lives[i].lives > 0)
                 {
@@ -248,13 +243,12 @@ int main (int argc, char* args[])
                 }
             }
             graphics.presentscene();
-            cerr << p.location.x << " " << p.location.y << endl;
-            
+            //============== death =====================================
             if (lives[0].lives == 0)
             {
                 Mix_PauseMusic();
                 Mix_PlayMusic(death_sound, 0);
-                SDL_Delay(3000);
+                SDL_Delay(4000);
                 init_player(&p);
 
                     init_asteroids(asteroids, ASTEROIDS);
@@ -262,9 +256,11 @@ int main (int argc, char* args[])
                     for (int i = 0; i < LIVES; i++) {
                         lives[i].lives = 1;
                     }
+                play(background_sound);
                 độ = 0;
                 int retmenu = showmenu(menu, graphics);
                 if (retmenu == 1) {quit = 1;}
+                
             }
         }
     }

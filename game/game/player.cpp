@@ -6,10 +6,10 @@
 #include "player.hpp"
 #include "vector.hpp"
 #include <SDL2_mixer/SDL_mixer.h>
-void init_player(struct player* p) {
+void init_player( player* p) {
     
-    int i = 0;
-    struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+    
+     vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
     
     p->hit_radius = 15;
     p->lives = 3;
@@ -24,8 +24,7 @@ void init_player(struct player* p) {
     p->obj_vert[2].x = 1;
     p->obj_vert[2].y = -1;
 
-    //convert player verts from object space to world space
-    for(i = 0; i < P_VERTS; i++) {
+    for(int i = 0; i < P_VERTS; i++) {
 
         multiply_vector(&p->obj_vert[i], -1);
         multiply_vector(&p->obj_vert[i], 12);
@@ -33,30 +32,28 @@ void init_player(struct player* p) {
         add_vector(&p->world_vert[i], &translation);
     }
     
-    for(i = 0; i < BULLETS; i++) {
+    for(int i = 0; i < BULLETS; i++) {
         
         p->bullets[i].alive = FALSE;
     }
 }
 
-void apply_force(struct vector2d* velocity, struct vector2d v) {
+void apply_force( vector2d* velocity,  vector2d v) {
 
     add_vector(velocity, &v);
 }
 
-struct vector2d get_direction(struct player* p) {
+ vector2d get_direction( player* p) {
 
-    struct vector2d direction = p->obj_vert[0];
+    vector2d direction = p->obj_vert[0];
     normalise_vector(&direction);
 
     return direction;
 }
 
-void shoot_bullet(struct player* p, Mix_Chunk *bullet_sound) {
-    
-    int i = 0;
+void shoot_bullet( player* p, Mix_Chunk *bullet_sound) {
 
-    for (i = 0; i < BULLETS; i++) {
+    for (int i = 0; i < BULLETS; i++) {
         
         if (p->bullets[i].alive == FALSE) {
             
@@ -70,45 +67,38 @@ void shoot_bullet(struct player* p, Mix_Chunk *bullet_sound) {
     }
 }
 
-
-
-   
-
-
-void update_player(struct player* p) {
+void update_player( player* p) {
     
     limit_vector(&p->velocity, 2);
     add_vector(&p->location, &p->velocity);
     
-    struct vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+    vector2d translation = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
 
-    int i = 0;
-
-    for (i =0; i < P_VERTS; i++) {
+    for (int i =0; i < P_VERTS; i++) {
         
         p->world_vert[i] = add_vector_new(&p->obj_vert[i], &p->location);
         add_vector(&p->world_vert[i], &translation);
     }
     
-    for (i = 0; i < BULLETS; i++) {
+    for (int i = 0; i < BULLETS; i++) {
         
         add_vector(&p->bullets[i].location, &p->bullets[i].velocity);
     }
 }
 
-void rotate_player(struct player* p, float degrees) {
+void rotate_player( player* p, float degrees) {
     
-    int i = 0;
+  
 
-    for (i =0; i < P_VERTS; i++) {
+    for (int i =0; i < P_VERTS; i++) {
     
         rotate_vector(&p->obj_vert[i], degrees);
     }
 }
 
-void bounds_player(struct player* p) {
+void bounds_player( player* p) {
     
-    int i = 0;
+   
     
     if (p->location.x < -SCREEN_WIDTH / 2) {
         
@@ -130,9 +120,9 @@ void bounds_player(struct player* p) {
         p->location.y = -SCREEN_HEIGHT / 2;
     }
 
-    //bullet is out of bounds, reset bullet to be shot again
-    //bullets are in world space
-    for (i = 0; i < BULLETS; i++) {
+    //reset bullet
+    
+    for (int i = 0; i < BULLETS; i++) {
         
         if (p->bullets[i].location.x < 0 || p->bullets[i].location.x >= SCREEN_WIDTH) {
             
